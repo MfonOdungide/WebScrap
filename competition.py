@@ -95,5 +95,5 @@ for match_competition in day_competition:
 	print("HT1: " + p_ht1)
 
 	f.write (p_htx + "," + "\n")
-	# f.write (competition_name + "," + time  +"," + teams +"," + tip + "," + link + ","+ p_htx + "," +"\n" )
+f.write (competition_name + "," + time  +"," + teams +"," + tip + "," + link + ","+ p_htx + "," +"\n" )
 f.close()
