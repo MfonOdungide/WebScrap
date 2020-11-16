@@ -40,44 +40,29 @@ for results in lastteamsmatches:
     count = 0
 
     matchitem = results.findAll ("div", {"class":"matchitem"}) #all 10 match details each
-    
     for Matchresult in matchitem:
-        FT = Matchresult.findAll ("div", {"class":"goals"})
-        FT_awaygoal = FT[1].text
-        FT_homegoal = FT[0].text
+        # FT = Matchresult.findAll ("div", {"class":"goals"})
+        # FT_awaygoal = FT[1].text
+        # FT_homegoal = FT[0].text
+        matchdetails = results.findAll ("div", {"class":"details"})
+        # print('===============================')
+        # print('FullTime ' + FT_homegoal +' : ' + FT_awaygoal)
+    for rows in matchdetails:
 
-    matchdetails = results.findAll ("div", {"class":"details"})
-    print('===============================')
-   
-    # print (len(matchitem))
-    # print(len(matchdetails))
-    # print(matchdetails[0].text)
-    # print(matchrow)
-    # print(matchitem)
-    # print (row1[2].text)  
-        
-
-     
-        # print(homegoal +' : ' + awaygoal)
-        # HT = halftime.findAll ("div", {"class":"goals"})
-        # awaygoal = HT[0].text
-        # homegoal = HT[1].text
-        
-    maxaction = len(actions)
-    print('******************')
-    print('HalfTime ' + homegoal +' : ' + awaygoal)
-        
-    for i in range (maxaction):
-        print(actions[i].text) 
-for rows in matchdetails:
-
-    actions = rows.findAll ("div", {"class":"player"}) or rows.findAll ("div", {"class":"noaction"})
+        actions = rows.findAll ("div", {"class":"player"}) or rows.findAll ("div", {"class":"noaction"})
     # for halftime in matchdetails:
-    HT = rows.findAll ("div", {"class":"goals"})
-    awaygoal = HT[0].text
-    homegoal = HT[1].text
-    print('FullTime ' + FT_homegoal +' : ' + FT_awaygoal)
-
-                
-
-
+        HT = rows.findAll ("div", {"class":"goals"})
+        awaygoal = HT[0].text
+        homegoal = HT[1].text
+        maxaction = len(actions)
+        print('******************')
+        # print('FullTime ' + FT_homegoal +' : ' + FT_awaygoal)
+        print('HalfTime ' + homegoal +' : ' + awaygoal)
+    
+        for i in range (maxaction):
+            print(actions[i].text)
+        # for Matchresult in matchitem:
+        #     FT = Matchresult.findAll ("div", {"class":"goals"})
+        #     FT_awaygoal = FT[1].text
+        #     FT_homegoal = FT[0].text
+    # print('FullTime ' + FT_homegoal +' : ' + FT_awaygoal)
