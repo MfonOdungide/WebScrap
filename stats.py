@@ -1,17 +1,20 @@
 from urllib.request import urlopen as uReq
 from bs4 import BeautifulSoup as soup
 import os
+import threading
+import unicodedata
 
 def remove(string):
-    return string.replace (" ","")
-
-myurl = remove('http://www.statarea.com/compare/teams/Vila+Nova(Brazil)/Botafogo+PB(Brazil)')
+    return string.replace (" ","") or ("%20","")
+myurl = remove('http://www.statarea.com/compare/teams/Spal(Italy)/Pescara(Italy)')
+# myurl = remove('http://www.statarea.com/compare/teams/Vila+Nova(Brazil)/Botafogo+PB(Brazil)')
+# myurl = remove('http://www.statarea.com/compare/teams/Andorra(Andorra)/Latvia(Latvia)')
 uClient = uReq(myurl)
 page_html = uClient.read()
 uClient.close()
-page_soup = soup(page_html, "html.parser")
+page_soup = soup(page_html, "html.parser")#.get_text(strip=True)
 
-matchsummary = page_soup.findAll("div",{"class":"facts"})
+matchsummaryfacts = page_soup.findAll("div",{"class":"facts"})
 lastteamsmatches = page_soup.findAll("div",{"class":"lastteamsmatches"})
 teamstatistics = page_soup.findAll("div",{"class":"teamsstatistics"})
 teambetstatistics = page_soup.findAll("div",{"class":"teamsbetstatistics"})
@@ -37,23 +40,45 @@ class displayResult:
         self.dots()
   
 def SummaryFacts():
-    for summarymatchfacts in matchsummary:
+    print('-------------------------------')
+    print ('Summary Match Facts')
+    print('-------------------------------')
+    for summarymatchfacts in matchsummaryfacts:
     # Finding the summary of the matches
-        row1 = summarymatchfacts.findAll ("div", {"class":"value"})
-        # print(row1)
-        TotalMatches = row1[0].text
-        HomeWins = row1[1].text
-        AwayWins = row1[2].text
-        DrawMatch = row1[3].text
-        # print("Total Number of Matches:" + TotalMatches)
-        # print("Home Wins:" + HomeWins)
-        # print("Away Wins:" + AwayWins)
-        # print("Draw Matches:" + DrawMatch)
+        summary = summarymatchfacts.findAll ("div", {"class":"value"})
+        # print(len(summary))
+        summarychart = summarymatchfacts.findAll ("div", {"class":"chart"})
+        TotalMatches = summary[0].text
+        HomeWins = summary[1].text
+        AwayWins = summary[2].text
+        DrawMatch = summary[3].text
+        str_summarychart = (summarychart[0].text)
+        # print(str_summarychart)
+        list_chart1 = []
+        list_chart1.append(str_summarychart)
+        
+        # print ('Listchar1 =' + str(list_chart1))
+        list_chartFind = str(list_chart1).replace(u'\\xa0','0%')
+        
+        cl1 = list_chartFind.replace(u'[\'','') 
+        list_clean = cl1.replace(u'\']','')
+        chart = (list_clean).split("%",3)
+        Home = chart[0]
+        Draw = chart[1]
+        Away = chart[2]
 
+        print("Total Number of Matches:" + TotalMatches)
+        print("Home Wins:" + HomeWins)
+        print("Away Wins:" + AwayWins)
+        print("Draw Matches:" + DrawMatch)
+        print(" Home " + " Draw " + " Away")
+        print("  "+ Home +"%  " + Draw +"%    "+ Away + "%    ")
 
 def Last10TeamMatches():
-    # disp = displayResult()
-    # disp.longLine()
+    print('-------------------------------')
+    print ('Last 10 Team Matches')
+    print('-------------------------------')
+
     for results in lastteamsmatches:
         matchitem = results.findAll ("div", {"class":"matchitem"}) #all 10 match details each
     for FTgoals in matchitem:
@@ -89,12 +114,12 @@ def Last10TeamMatches():
         # print('FullTime ' + FT_homegoal +' : ' + FT_awaygoal)
         # disp.result(HalfTime,FullTime,goals)
 
-
 def Last10Facts():
     for statisticsFacts in teamstatistics:
             row2 = statisticsFacts.findAll ("div", {"class":"value"})
-            print('===============================')
-            print ('Last 10 Matches Statistics')
+            print('-------------------------------')
+            print ('Facts for Last 10 Matches')
+            print('-------------------------------')
             print('                 Home     Away')
             print('Win                ' + row2[0].text + '        ' + row2[13].text)
             print('Draw               ' + row2[1].text + '        ' + row2[14].text)
@@ -109,7 +134,7 @@ def Last10Facts():
             print('Under 2.5          ' + row2[10].text + '        ' + row2[23].text)
             print('Time No Score      ' + row2[11].text + '        ' + row2[24].text)
             print('Time No Conceed    ' + row2[12].text + '        ' + row2[25].text)
-            print('===============================')
+            # print('===============================')
 
 def Last10Statistics():
     for statisticsFacts in teambetstatistics:
@@ -121,6 +146,9 @@ def Last10Statistics():
         Away_HomeWins = row2[88].text
         Away_Draw = row2[89].text
         Away_AwayWins = row2[90].text
+        print('-------------------------------')
+        print ('Statistics for Last 10 Matches')
+        print('-------------------------------')
         print('Home Wins    '+ Home_HomeWins + ' : ' + 'Away Wins   '+ Away_HomeWins)
         print('Draw Wins    '+ Home_Draw + ' : ' + 'Away Draw   '+ Away_Draw)
         print('Away Wins    '+ Home_AwayWins + ' : ' + 'Home Wins   '+ Away_AwayWins)
@@ -141,13 +169,13 @@ def Last10Statistics():
         # 16-30mins -->[30],[118]
         # 31-45mins -->[31],[119]
         # ******************************************
-        
+
 
 def main():
-	# TeamMatches()
-    # matchsummary()
-    # Last10Facts()
-    Last10Statistics()
+    SummaryFacts()
+    # Last10TeamMatches()
+    # threading.Thread(Last10Facts()).start
+    # threading.Thread(Last10Statistics())
 
 
 
